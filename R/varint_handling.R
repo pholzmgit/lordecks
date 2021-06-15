@@ -1,0 +1,103 @@
+#' translate varint bytes into binary representation
+#' of encoded integers
+varint_bytes_to_binary <- function(bytearray) {
+  # varint:
+  # MSB:
+  #     1: next byte part of same integer
+  #     0: last (or only) byte of current integer
+  #
+  # 01111111 -> 1111111  [127]
+  # 10000001 00000000 -> 00000010000000 [128]
+  #    this only has impact if there are > 127 cards per region & set
+
+  #check all bytes are correct length
+  if(sum(stringr::str_length(bytearray) == 8) != length(bytearray)) {
+    stop("not all elements are bytes of length 8")
+  }
+
+  binary_out <- c()
+  leading <- ""
+
+  while(length(bytearray) > 0) {
+    b <- bytearray[1]
+    bytearray <- bytearray[-1]
+
+    MSB <- stringr::str_extract(b, "^[01]{1}")
+    bin_number <- stringr::str_extract(b, "[01]{7}$")
+
+    current_bin <- paste0(leading, bin_number)
+
+    if(MSB == "0") {
+      binary_out <- c(binary_out, current_bin)
+      leading <- ""
+    } else {
+      leading <- bin_number
+    }
+
+  }
+
+  if(leading != "") {
+    warning("Probably invalid varints (MSB of last byte not 0).")
+  }
+
+  binary_out
+}
+
+
+
+
+
+#' translate array of integers into varint bytes
+int_to_varint <- function(int_array) {
+  # example in:  3, 128, 12
+  # example out : "00000011" "10000001" "00000000" "00001100"
+
+  # varint:
+  # MSB:
+  #     1: next byte part of same integer
+  #     0: last (or only) byte of current integer
+  #
+  # 01111111 <- 1111111  [127]
+  # 10000001 00000000 <- 00000010000000 [128]
+  #    this only has impact if there are > 127 cards per region & set
+
+  if(any(as.numeric(int_array) > 2e9)) {
+
+    stop("at least one of the integers is > 2e9,\n which causes issues with the int to binary conversion.  check ?integer")
+  }
+
+  varint_out <- c()
+
+  for(i in int_array) {
+
+    bin_num <- R.utils::intToBin(i)
+    n_bits <- stringr::str_length(bin_num)
+
+
+    #ensure multiples of 7 bits (and add relevant MSB later)
+    n_bytes <- ceiling(n_bits / 7)
+    pad_lead <- n_bytes * 7 - n_bits
+    padding <- ifelse(pad_lead > 0, glue::glue_collapse(rep(0, pad_lead)), "")
+    bin_num_padded <- glue::glue("{padding}{bin_num}")
+
+    if(n_bits > 7) {
+
+      non_MSB <- stringr::str_match_all(bin_num_padded, "[01]{7}")[[1]][, 1]
+      #add leading 1 to all
+      with_MSB <- as.character(glue::glue("1{non_MSB}"))
+      #set leading 0 for last element in varint
+      with_MSB[length(with_MSB)] <- stringr::str_replace(with_MSB[length(with_MSB)], "^1", "0")
+
+      varint_out <- c(varint_out, with_MSB)
+
+    } else {
+      new_byte <- as.character(glue::glue("0{bin_num_padded}"))
+      varint_out <- c(varint_out, new_byte)
+    }
+  }
+
+  varint_out
+
+}
+
+
