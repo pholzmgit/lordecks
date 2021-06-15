@@ -1,6 +1,8 @@
 #' translate decklist with cards and their count
 #' into an integer representation following the rules
 #' laid out in https://github.com/RiotGames/LoRDeckCodes/blob/master/README.md
+#'
+#' @importFrom rlang .data
 gen_int_decklist <- function(decklist, faction_lut = get_faction_lut()) {
 
   if(!is.data.frame(decklist) |
@@ -19,31 +21,32 @@ gen_int_decklist <- function(decklist, faction_lut = get_faction_lut()) {
 
   #ensure all count levels are present
   if(sum(decklist$count == 1) == 0) {
-    decklist <- decklist %>% bind_rows(
+    decklist <- decklist %>% dplyr::bind_rows(
       data.frame(count = 1, cardcode = "")
     )
   }
   if(sum(decklist$count == 2) == 0) {
-    decklist <- decklist %>% bind_rows(
+    decklist <- decklist %>% dplyr::bind_rows(
       data.frame(count = 2, cardcode = "")
     )
   }
   if(sum(decklist$count == 3) == 0) {
-    decklist <- decklist %>% bind_rows(
+    decklist <- decklist %>% dplyr::bind_rows(
       data.frame(count = 3, cardcode = "")
     )
   }
 
 
   decklist <- decklist %>%
-    mutate(
-      faction = str_match(cardcode, "[A-Z]{2}")[, 1],
-      set = as.integer(str_match(cardcode, "^[0-9]{2}")),
-      card_number = as.integer(str_match(cardcode, "[0-9]{3}$"))
+    dplyr::mutate(
+      faction = stringr::str_match(.data$cardcode, "[A-Z]{2}")[, 1],
+      set = as.integer(stringr::str_match(.data$cardcode, "^[0-9]{2}")),
+      card_number = as.integer(stringr::str_match(.data$cardcode, "[0-9]{3}$"))
     )
 
   decklist <- decklist %>%
-    left_join(faction_lut %>% dplyr::select("Integer_Identifier", "Faction_Identifier", "Version"),
+    dplyr::left_join(faction_lut %>%
+                       dplyr::select(.data$Integer_Identifier, .data$Faction_Identifier, .data$Version),
               by = c("faction" = "Faction_Identifier"))
 
   max_version <- max(decklist$Version, na.rm = TRUE)
@@ -51,7 +54,7 @@ gen_int_decklist <- function(decklist, faction_lut = get_faction_lut()) {
   #first byte
   # the original encoder fixes this at 19, but the actual
   # game exports only based on the factions - do so as well
-  version_format <- case_when(
+  version_format <- dplyr::case_when(
     max_version == 1 ~ 17, #i.e. 00010001 for version 1
     max_version == 2 ~ 18, #i.e. 00010010 for version 2
     max_version == 3 ~ 19, #i.e. 00010011 for version 3
@@ -74,39 +77,39 @@ gen_int_decklist <- function(decklist, faction_lut = get_faction_lut()) {
   # for 1-3 copies
   #-----------
   grouped_sorted_deck <- decklist %>%
-    dplyr::filter(count < 4) %>%
-    group_by(count, set, faction) %>%
-    mutate(group_n = n()) %>%
+    dplyr::filter(.data$count < 4) %>%
+    dplyr::group_by(.data$count, .data$set, .data$faction) %>%
+    dplyr::mutate(group_n = dplyr::n()) %>%
     # The sorting convention of this encoding scheme is
     # First by the number of set/faction combinations in each top-level list
     # Second by the alphanumeric order of the card codes within those lists.
-    arrange(desc(count), group_n, cardcode)
+    dplyr::arrange(dplyr::desc(.data$count), .data$group_n, .data$cardcode)
 
   output_by_count <- grouped_sorted_deck %>%
     dplyr::transmute(
-      group_n = group_n,
-      Integer_Identifier = Integer_Identifier,
-      set = set,
-      cardid_ints = glue::glue_collapse(card_number, sep = ", ")
+      group_n = .data$group_n,
+      Integer_Identifier = .data$Integer_Identifier,
+      set = .data$set,
+      cardid_ints = glue::glue_collapse(.data$card_number, sep = ", ")
     ) %>%
     unique() %>%
-    mutate(group_ints = glue::glue("{group_n}, {set}, {Integer_Identifier}, {cardid_ints}")) %>%
-    group_by(count) %>%
+    dplyr::mutate(group_ints = glue::glue("{group_n}, {set}, {Integer_Identifier}, {cardid_ints}")) %>%
+    dplyr::group_by(.data$count) %>%
     dplyr::summarize(
-      toplevel_n = n(),
-      toplevel_ints = glue::glue_collapse(group_ints, sep = ", "),
+      toplevel_n = dplyr::n(),
+      toplevel_ints = glue::glue_collapse(.data$group_ints, sep = ", "),
       .groups = "keep"
     ) %>%
-    transmute(top_ints = case_when(stringr::str_detect(toplevel_ints, "NA") ~ "0",
+    dplyr::transmute(top_ints = dplyr::case_when(stringr::str_detect(.data$toplevel_ints, "NA") ~ "0",
                                    # NA's should should only ever show up here
                                    # when we added invalid cardcodes for missing count levels
                                    TRUE ~ as.character(glue::glue("{toplevel_n}, {toplevel_ints}"))))
 
-  int_out_3 <- (output_by_count %>% dplyr::filter(count == 3) %>% pull(top_ints) %>%
+  int_out_3 <- (output_by_count %>% dplyr::filter(.data$count == 3) %>% dplyr::pull(.data$top_ints) %>%
                   stringr::str_split(pattern = ", "))[[1]]
-  int_out_2 <- (output_by_count %>% dplyr::filter(count == 2) %>% pull(top_ints) %>%
+  int_out_2 <- (output_by_count %>% dplyr::filter(.data$count == 2) %>% dplyr::pull(.data$top_ints) %>%
                   stringr::str_split(pattern = ", "))[[1]]
-  int_out_1 <- (output_by_count %>% dplyr::filter(count == 1) %>% pull(top_ints) %>%
+  int_out_1 <- (output_by_count %>% dplyr::filter(.data$count == 1) %>% dplyr::pull(.data$top_ints) %>%
                   stringr::str_split(pattern = ", "))[[1]]
 
   int_out <- c(int_out, int_out_3, int_out_2, int_out_1)
@@ -117,9 +120,9 @@ gen_int_decklist <- function(decklist, faction_lut = get_faction_lut()) {
   # simply sorted by card code
   if(max(decklist$count, na.rm = TRUE) > 3) {
     special_cases <- decklist %>%
-      dplyr::filter(count > 3) %>%
-      arrange(cardcode) %>%
-      mutate(card_ints = glue::glue("{count}, {set}, {Integer_Identifier}, {card_number}"))
+      dplyr::filter(.data$count > 3) %>%
+      dplyr::arrange(.data$cardcode) %>%
+      dplyr::mutate(card_ints = glue::glue("{count}, {set}, {Integer_Identifier}, {card_number}"))
 
     for(c in special_cases$card_ints) {
       int_out <- c(int_out, stringr::str_split(c, pattern = ", ")[[1]])

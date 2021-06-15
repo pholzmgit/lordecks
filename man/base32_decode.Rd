@@ -5,7 +5,7 @@
 \title{decode base32 representation of deck code
 into integer array describing the deck list}
 \usage{
-base32_decode(code)
+base32_decode(code, MAX_KNOWN_VERSION = 3)
 }
 \description{
 decode base32 representation of deck code

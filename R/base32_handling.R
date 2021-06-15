@@ -26,7 +26,7 @@ base32_encode <- function(int_decklist) {
 
   encoded_single <- purrr::map_chr(b32_nums, ~symbol_vec[value_vec == .x])
 
-  glue::glue_collapse(encoded_single, sep = "")
+  as.character(glue::glue_collapse(encoded_single, sep = ""))
 
   #example out: "CEDACAIFDUAQEBAIAECAIBICAECDGNACAMCQIBQDAMCAKDISAIAQCBBWAIAQKEZPAIAQGBIMAMAQKAIZEE"
 

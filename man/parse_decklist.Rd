@@ -5,7 +5,7 @@
 \title{parse integer representation of decklist
 returns dataframe with cardcode, count, faction, set and card number}
 \usage{
-parse_decklist(cardinfo)
+parse_decklist(cardinfo, faction_lut = get_faction_lut())
 }
 \description{
 parse integer representation of decklist

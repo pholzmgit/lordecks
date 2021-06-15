@@ -6,7 +6,7 @@
 into an integer representation following the rules
 laid out in https://github.com/RiotGames/LoRDeckCodes/blob/master/README.md}
 \usage{
-gen_int_decklist(decklist)
+gen_int_decklist(decklist, faction_lut = get_faction_lut())
 }
 \description{
 translate decklist with cards and their count
