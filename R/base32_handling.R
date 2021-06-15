@@ -20,6 +20,10 @@ base32_encode <- function(int_decklist) {
   b32_nums <- strtoi(b32_binary, base = 2)
 
   # translate 0:31 to RFC 4648
+  #RFC 4648
+  symbol_vec <- c(LETTERS, "2", "3", "4", "5", "6", "7")
+  value_vec <- 0:31
+
   encoded_single <- purrr::map_chr(b32_nums, ~symbol_vec[value_vec == .x])
 
   glue::glue_collapse(encoded_single, sep = "")
@@ -31,7 +35,7 @@ base32_encode <- function(int_decklist) {
 
 #' decode base32 representation of deck code
 #' into integer array describing the deck list
-base32_decode <- function(code) {
+base32_decode <- function(code, MAX_KNOWN_VERSION = 3) {
 
   #example in: "CEDACAIFDUAQEBAIAECAIBICAECDGNACAMCQIBQDAMCAKDISAIAQCBBWAIAQKEZPAIAQGBIMAMAQKAIZEE"
 
@@ -44,6 +48,11 @@ base32_decode <- function(code) {
 
 
   # translate RFC 4648 to 0:31
+
+  #RFC 4648
+  symbol_vec <- c(LETTERS, "2", "3", "4", "5", "6", "7")
+  value_vec <- 0:31
+
   single_characters <- strsplit(code, NULL)[[1]]
   translated_code <- purrr::map_chr(single_characters, ~value_vec[symbol_vec == .x])
 
