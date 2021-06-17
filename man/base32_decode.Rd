@@ -2,12 +2,26 @@
 % Please edit documentation in R/base32_handling.R
 \name{base32_decode}
 \alias{base32_decode}
-\title{decode base32 representation of deck code
-into integer array describing the deck list}
+\title{Decode base-32 representation of deck code}
 \usage{
-base32_decode(code, MAX_KNOWN_VERSION = 3)
+base32_decode(code, max_known_version = 3)
+}
+\arguments{
+\item{code}{character deck code in base 32 (RFC 4648)}
+
+\item{max_known_version}{integer of version of encoding. Only effect is which regions are available due to
+expansions.}
+}
+\value{
+integer vector describing the deck list (without the version info in the first byte, which is only
+used for a validity check)
 }
 \description{
-decode base32 representation of deck code
-into integer array describing the deck list
+Deck lists are stored and shared in an \emph{RFC 4648} base-32 code. This function
+decodes this first into varint bytes to get to the integer representation of the deck list.
+The output can be further parsed according to \href{https://github.com/RiotGames/LoRDeckCodes}{these rules}.
+}
+\examples{
+lordecks:::base32_decode("CEDACAIFDUAQEBAIAECAIBICAECDGNACAMCQIBQDAMCAKDISAIAQCBBWAIAQKEZPAIAQGBIMAMAQKAIZEE")
+# returns c("6", "1", "1", "5", "29", "1", "2", "4", "8", "1", "4", "4", "5", "2", "1", "4", "51", "52", "2", "3", "5", "4", "6", "3", "3", "4", "5", "13", "18", "2", "1", "1", "4", "54", "2", "1", "5", "19", "47", "2", "1", "3", "5", "12", "3", "1", "5", "1", "25", "33"))
 }

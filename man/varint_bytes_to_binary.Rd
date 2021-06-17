@@ -2,12 +2,26 @@
 % Please edit documentation in R/varint_handling.R
 \name{varint_bytes_to_binary}
 \alias{varint_bytes_to_binary}
-\title{translate varint bytes into binary representation
-of encoded integers}
+\title{Translate varint bytes into binary integer}
 \usage{
 varint_bytes_to_binary(bytearray)
 }
+\arguments{
+\item{bytearray}{character vector with each entry representing one byte ("01110011")}
+}
+\value{
+If the input is a valid array of varint bytes,
+the function returns the corresponding integers in binary
+}
 \description{
-translate varint bytes into binary representation
-of encoded integers
+The function takes a vector of varint bytes and parses them into an array of
+integers (in binary format). For varints, the most significant bit indicates
+whether the next byte belongs to the same integer (1) or if it is the last byte (0).
+}
+\examples{
+lordecks:::varint_bytes_to_binary("01111111")
+# returns "1111111"                        # = 127
+
+lordecks:::varint_bytes_to_binary(c("01111111", "10000001", "00000000"))
+# returns c(1111111, 00000010000000)       # = c(127, 128)
 }

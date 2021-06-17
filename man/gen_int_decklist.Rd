@@ -2,14 +2,38 @@
 % Please edit documentation in R/decklist_handling.R
 \name{gen_int_decklist}
 \alias{gen_int_decklist}
-\title{translate decklist with cards and their count
-into an integer representation following the rules
-laid out in https://github.com/RiotGames/LoRDeckCodes/blob/master/README.md}
+\title{translate decklist of card ID and count into LoR custom encoding}
 \usage{
-gen_int_decklist(decklist, faction_lut = get_faction_lut())
+gen_int_decklist(decklist)
+}
+\arguments{
+\item{decklist}{dataframe with character column \emph{cardcode} adn numeric column \emph{count}}
+}
+\value{
+integer representation of deck code
 }
 \description{
-translate decklist with cards and their count
-into an integer representation following the rules
-laid out in https://github.com/RiotGames/LoRDeckCodes/blob/master/README.md
+LoR uses a custom encoding scheme (\href{https://github.com/RiotGames/LoRDeckCodes}{laid out here})
+to store information about the cards (and their count) in any given deck as an
+integer vector. This function takes care of this.
+}
+\examples{
+#minimalist example
+min_deck <- data.frame(
+  "cardcode" = c("01PZ008", "01PZ040"),
+  "count" = c(3, 3)
+)
+
+lordecks:::gen_int_decklist(min_deck)
+
+# returns  : "17" "1" "2" "1" "4" "8" "40" "0" "0"
+# version/format 17 ("00010001"), last 4 bits are version (=1)
+# 1 group of 3 copies
+#    2 cards for combination of
+#  1 set 1   and
+#  4 faction 4 (PZ)
+#      8   card code 01PZ008
+#     40   card code 01PZ040
+# 0 group of 2 copies
+# 0 group if 1 copy
 }

@@ -1,13 +1,23 @@
-#' translate varint bytes into binary representation
-#' of encoded integers
+#' Translate varint bytes into binary integer
+#'
+#' The function takes a vector of varint bytes and parses them into an array of
+#' integers (in binary format). For varints, the most significant bit indicates
+#' whether the next byte belongs to the same integer (1) or if it is the last byte (0).
+#'
+#' @param bytearray character vector with each entry representing one byte ("01110011")
+#' @return If the input is a valid array of varint bytes,
+#' the function returns the corresponding integers in binary
+#' @examples
+#' lordecks:::varint_bytes_to_binary("01111111")
+#' # returns "1111111"                        # = 127
+#'
+#' lordecks:::varint_bytes_to_binary(c("01111111", "10000001", "00000000"))
+#' # returns c(1111111, 00000010000000)       # = c(127, 128)
 varint_bytes_to_binary <- function(bytearray) {
   # varint:
   # MSB:
   #     1: next byte part of same integer
   #     0: last (or only) byte of current integer
-  #
-  # 01111111 -> 1111111  [127]
-  # 10000001 00000000 -> 00000010000000 [128]
   #    this only has impact if there are > 127 cards per region & set
 
   #check all bytes are correct length
@@ -47,19 +57,24 @@ varint_bytes_to_binary <- function(bytearray) {
 
 
 
-#' translate array of integers into varint bytes
+#' Translate integer vector into varint bytes
+#'
+#' The function takes a vector of integers and translates them into a varint byte vector.
+#' For varints, the most significant bit indicates whether the next byte belongs to the
+#' same integer (1) or if it is the last byte (0), so the lenght of the input and output
+#' vectors do not match as soon as one of the numbers i larger than 127.
+#'
+#' @param int_array vector of positive integers
+#' @return If all inputs are smaller than 2e9, a character vector containing varint bytes
+#' @examples
+#' lordecks:::int_to_varint(c(3, 128, 12))
+#' # returns c("00000011", "10000001", "00000000", "00001100")
 int_to_varint <- function(int_array) {
-  # example in:  3, 128, 12
-  # example out : "00000011" "10000001" "00000000" "00001100"
 
-  # varint:
-  # MSB:
-  #     1: next byte part of same integer
-  #     0: last (or only) byte of current integer
-  #
-  # 01111111 <- 1111111  [127]
-  # 10000001 00000000 <- 00000010000000 [128]
-  #    this only has impact if there are > 127 cards per region & set
+  if(any(as.numeric(int_array) < 0)) {
+
+    stop("at least one of the integers is negative.")
+  }
 
   if(any(as.numeric(int_array) > 2e9)) {
 

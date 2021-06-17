@@ -2,12 +2,25 @@
 % Please edit documentation in R/base32_handling.R
 \name{base32_encode}
 \alias{base32_encode}
-\title{encode integer array describing the deck list
-into base32 representation of deck code}
+\title{Encode integer vector into base-32deck code}
 \usage{
 base32_encode(int_decklist)
 }
+\arguments{
+\item{int_decklist}{integer vector describing the deck list}
+}
+\value{
+character deck code in base 32 (RFC 4648)
+}
 \description{
-encode integer array describing the deck list
-into base32 representation of deck code
+Deck lists are stored and shared in an \emph{RFC 4648} base-32 code. This function
+takes an integer representation of the deck list (according to \href{https://github.com/RiotGames/LoRDeckCodes}{these rules})
+and encodes them via varint bytes into base-32
+}
+\examples{
+lordecks:::base32_encode(c("17", "6", "1", "1", "5", "29", "1", "2", "4", "8", "1", "4",
+ "4", "5", "2", "1", "4", "51", "52", "2", "3", "5", "4", "6", "3", "3", "4", "5",
+ "13", "18", "2", "1", "1", "4", "54", "2", "1", "5", "19", "47", "2", "1", "3",
+ "5", "12", "3", "1", "5", "1", "25", "33"))
+#"CEDACAIFDUAQEBAIAECAIBICAECDGNACAMCQIBQDAMCAKDISAIAQCBBWAIAQKEZPAIAQGBIMAMAQKAIZEE"
 }

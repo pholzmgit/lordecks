@@ -1,9 +1,34 @@
-#' translate decklist with cards and their count
-#' into an integer representation following the rules
-#' laid out in https://github.com/RiotGames/LoRDeckCodes/blob/master/README.md
+#' translate decklist of card ID and count into LoR custom encoding
 #'
+#' LoR uses a custom encoding scheme (\href{https://github.com/RiotGames/LoRDeckCodes}{laid out here})
+#' to store information about the cards (and their count) in any given deck as an
+#' integer vector. This function takes care of this.
+#'
+#' @param decklist dataframe with character column \emph{cardcode} adn numeric column \emph{count}
+#' @returns integer representation of deck code
 #' @importFrom rlang .data
-gen_int_decklist <- function(decklist, faction_lut = get_faction_lut()) {
+#' @examples
+#' #minimalist example
+#' min_deck <- data.frame(
+#'   "cardcode" = c("01PZ008", "01PZ040"),
+#'   "count" = c(3, 3)
+#' )
+#'
+#' lordecks:::gen_int_decklist(min_deck)
+#'
+#' # returns  : "17" "1" "2" "1" "4" "8" "40" "0" "0"
+#' # version/format 17 ("00010001"), last 4 bits are version (=1)
+#' # 1 group of 3 copies
+#' #    2 cards for combination of
+#' #  1 set 1   and
+#' #  4 faction 4 (PZ)
+#' #      8   card code 01PZ008
+#' #     40   card code 01PZ040
+#' # 0 group of 2 copies
+#' # 0 group if 1 copy
+gen_int_decklist <- function(decklist) {
+
+  faction_lut <- get_faction_lut()
 
   if(!is.data.frame(decklist) |
      !("cardcode" %in% colnames(decklist)) |
@@ -135,9 +160,39 @@ gen_int_decklist <- function(decklist, faction_lut = get_faction_lut()) {
 }
 
 
-#' parse integer representation of decklist
-#' returns dataframe with cardcode, count, faction, set and card number
-parse_decklist <- function(cardinfo, faction_lut = get_faction_lut()) {
+#' Parse integer representation of decklist
+#' returns
+#'
+#' LoR uses a custom encoding scheme (\href{https://github.com/RiotGames/LoRDeckCodes}{laid out here})
+#' to store information about the cards (and their count) in any given deck as an
+#' integer vector. This function takes the integer vector and translates it
+#' into a readable deck list with actual card codes and factions.
+#'
+#' @param cardinfo integer vector representing the deck list (without version info)
+#' @returns dataframe with cardcode, count, faction, set and card number
+#' @importFrom rlang .data
+#' @examples
+#' #minimalist example
+#'
+#' lordecks:::parse_decklist(c(1, 2, 1, 4, 8, 40, 0, 0))
+#'
+#' # returns  :
+#' #   cardcode count faction set card_number
+#' # 1  01PZ008     3      PZ   1         008
+#' # 2  01PZ040     3      PZ   1         040
+#' #
+#' #
+#' # 1 group of 3 copies
+#' #    2 cards for combination of
+#' #  1 set 1   and
+#' #  4 faction 4 (PZ)
+#' #      8   card code 01PZ008
+#' #     40   card code 01PZ040
+#' # 0 group of 2 copies
+#' # 0 group if 1 copy
+parse_decklist <- function(cardinfo) {
+
+  faction_lut <- get_faction_lut()
 
   cardinfo <- as.integer(cardinfo)
 
