@@ -94,7 +94,7 @@ base32_decode <- function(code, max_known_version = 3) {
   #check version
   version_byte <- varint_bytes[1]
   # version/format 17 ("00010001"), last 4 bits are version (1)
-  version <- strtoi(stringr::str_extract(version_byte, "[01]{4}$"))
+  version <- strtoi(stringr::str_extract(version_byte, "[01]{4}$"), base = 2)
   if(version > max_known_version) {
     warning(glue::glue("The provided code requires a higher version ({version}) of this library (some regions may be missing); please update."))
   }
