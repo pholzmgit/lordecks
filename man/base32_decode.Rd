@@ -22,6 +22,12 @@ decodes this first into varint bytes to get to the integer representation of the
 The output can be further parsed according to \href{https://github.com/RiotGames/LoRDeckCodes}{these rules}.
 }
 \examples{
-lordecks:::base32_decode("CEDACAIFDUAQEBAIAECAIBICAECDGNACAMCQIBQDAMCAKDISAIAQCBBWAIAQKEZPAIAQGBIMAMAQKAIZEE")
-# returns c("6", "1", "1", "5", "29", "1", "2", "4", "8", "1", "4", "4", "5", "2", "1", "4", "51", "52", "2", "3", "5", "4", "6", "3", "3", "4", "5", "13", "18", "2", "1", "1", "4", "54", "2", "1", "5", "19", "47", "2", "1", "3", "5", "12", "3", "1", "5", "1", "25", "33"))
+lordecks:::base32_decode(
+ "CEDACAIFDUAQEBAIAECAIBICAECDGNACAMCQIBQDAMCAKDISAIAQCBBWAIAQKEZPAIAQGBIMAMAQKAIZEE"
+ )
+# returns
+# c("6", "1", "1", "5", "29", "1", "2", "4", "8", "1", "4", "4", "5",
+#   "2", "1", "4", "51", "52", "2", "3", "5", "4", "6", "3", "3", "4",
+#   "5", "13", "18", "2", "1", "1", "4", "54", "2", "1", "5", "19",
+#   "47", "2", "1", "3", "5", "12", "3", "1", "5", "1", "25", "33"))
 }

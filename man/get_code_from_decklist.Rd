@@ -2,29 +2,36 @@
 % Please edit documentation in R/highlevel_functions.R
 \name{get_code_from_decklist}
 \alias{get_code_from_decklist}
+\alias{get_code_from_decklist_df}
 \title{Generate a shareable deck code from a decklist}
 \usage{
 get_code_from_decklist(decklist)
+
+get_code_from_decklist_df(decklist_df)
 }
 \arguments{
-\item{decklist}{dataframe with character column \emph{cardcode} and numeric column \emph{count}}
+\item{decklist}{character vector of decklist with format '\{count\}:\{cardcode\}'}
+
+\item{decklist_df}{dataframe with character column \emph{cardcode} and numeric column \emph{count}}
 }
 \value{
 character deck code in base 32 (RFC 4648)
 }
 \description{
 Deck lists are stored and shared in an \emph{RFC 4648} base-32 code. This top-level
-function takes the cards and their count , and encodes them according to the rules
+functions take the cards and their count , and encode them according to the rules
 (\href{https://github.com/RiotGames/LoRDeckCodes}{laid out here})
 }
 \examples{
-#minimalist example (obvisouly incomplete deck)
+#minimalist example (obviously incomplete deck)
 min_deck <- data.frame(
   "cardcode" = c("01PZ008", "01PZ040"),
   "count" = c(3, 3)
 )
 
-get_code_from_decklist(min_deck)
+get_code_from_decklist(c("3:01PZ008", "3:01PZ040"))
+# returns "CEAQEAIEBAUAAAA"#'
 
+get_code_from_decklist_df(min_deck)
 # returns "CEAQEAIEBAUAAAA"
 }

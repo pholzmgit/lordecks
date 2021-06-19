@@ -4,13 +4,16 @@
 \alias{get_decklist_from_code}
 \title{Generate deck list from shareable deck code}
 \usage{
-get_decklist_from_code(code)
+get_decklist_from_code(code, format = "df")
 }
 \arguments{
 \item{code}{character deck code in base 32 (RFC 4648)}
+
+\item{format}{output format of deck list, can be either "df" or "simple"}
 }
 \value{
-dataframe with cardcode, count, faction, set and card number
+dataframe with cardcode, count, faction, set and card number (for format "df")
+or a character vector with format '\{count\}:\{cardcode\}' (for format "simple")
 }
 \description{
 Deck lists are stored and shared in an \emph{RFC 4648} base-32 code. This top-level
@@ -18,9 +21,11 @@ function takes such an code and extracts the cards and their count according to 
 (\href{https://github.com/RiotGames/LoRDeckCodes}{laid out here})
 }
 \examples{
-get_decklist_from_code("CEDACAIFDUAQEBAIAECAIBICAECDGNACAMCQIBQDAMCAKDISAIAQCBBWAIAQKEZPAIAQGBIMAMAQKAIZEE")
-# returns
+get_decklist_from_code(
+"CEDACAIFDUAQEBAIAECAIBICAECDGNACAMCQIBQDAMCAKDISAIAQCBBWAIAQKEZPAIAQGBIMAMAQKAIZEE"
+)
 
+# returns (format: "df")
 #    cardcode count faction set card_number
 # 1   01SI029     3      SI   1         029
 # 2   02PZ008     3      PZ   2         008
@@ -39,4 +44,12 @@ get_decklist_from_code("CEDACAIFDUAQEBAIAECAIBICAECDGNACAMCQIBQDAMCAKDISAIAQCBBW
 # 15  01SI001     1      SI   1         001
 # 16  01SI025     1      SI   1         025
 # 17  01SI033     1      SI   1         033
+#
+# returns(format: simple)
+# c("3:01SI029", "3:02PZ008", "3:04PZ005", "3:01PZ051", "3:01PZ052",
+#   "3:03SI004", "3:03SI006", "3:03PZ005", "3:03PZ013", "3:03PZ018",
+#   "2:01PZ054", "2:01SI019", "2:01SI047", "1:03SI012", "1:01SI001",
+#   "1:01SI025", "1:01SI033")
+
+
 }

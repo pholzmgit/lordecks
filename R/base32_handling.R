@@ -56,8 +56,14 @@ base32_encode <- function(int_decklist) {
 #' @return integer vector describing the deck list (without the version info in the first byte, which is only
 #' used for a validity check)
 #' @examples
-#' lordecks:::base32_decode("CEDACAIFDUAQEBAIAECAIBICAECDGNACAMCQIBQDAMCAKDISAIAQCBBWAIAQKEZPAIAQGBIMAMAQKAIZEE")
-#' # returns c("6", "1", "1", "5", "29", "1", "2", "4", "8", "1", "4", "4", "5", "2", "1", "4", "51", "52", "2", "3", "5", "4", "6", "3", "3", "4", "5", "13", "18", "2", "1", "1", "4", "54", "2", "1", "5", "19", "47", "2", "1", "3", "5", "12", "3", "1", "5", "1", "25", "33"))
+#' lordecks:::base32_decode(
+#'  "CEDACAIFDUAQEBAIAECAIBICAECDGNACAMCQIBQDAMCAKDISAIAQCBBWAIAQKEZPAIAQGBIMAMAQKAIZEE"
+#'  )
+#' # returns
+#' # c("6", "1", "1", "5", "29", "1", "2", "4", "8", "1", "4", "4", "5",
+#' #   "2", "1", "4", "51", "52", "2", "3", "5", "4", "6", "3", "3", "4",
+#' #   "5", "13", "18", "2", "1", "1", "4", "54", "2", "1", "5", "19",
+#' #   "47", "2", "1", "3", "5", "12", "3", "1", "5", "1", "25", "33"))
 base32_decode <- function(code, max_known_version = 3) {
 
   #example in: "CEDACAIFDUAQEBAIAECAIBICAECDGNACAMCQIBQDAMCAKDISAIAQCBBWAIAQKEZPAIAQGBIMAMAQKAIZEE"

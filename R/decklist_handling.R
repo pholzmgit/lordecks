@@ -1,3 +1,42 @@
+#' parse simple decklist format into dataframe
+#'
+#' Intended for compatibility of the original decklist format and the more R native use
+#' of dataframes
+#'
+#' @param decklist character vector of decklist with format '\{count\}:\{cardcode\}'
+#' @returns dataframe with character column \emph{cardcode} and numeric column \emph{count}
+#' @examples
+#' lordecks:::simple_decklist_to_df(c("3:01PZ008", "3:01PZ040"))
+#' # returns  :
+#' #   count cardcode
+#' # 1     3  01PZ008
+#' # 2     3  01PZ040
+simple_decklist_to_df <- function(decklist) {
+  has_colon <- stringr::str_detect(decklist, ":")
+  if(sum(has_colon) < length(decklist)) {
+    stop(glue::glue("Ill-formated entries: {glue::glue_collapse(decklist[!has_colon], sep = ', ')}"))
+  }
+  purrr::map_dfr(decklist, function(x) {
+    count_card <- stringr::str_split(x, ":")[[1]]
+    data.frame("count" = as.numeric(count_card[1]),
+               "cardcode" = as.character(count_card[2]))
+  })
+}
+
+#' parse dataframe decklist into simple format
+#'
+#' Intended for compatibility of the original decklist format and the more R native use
+#' of dataframes
+#'
+#' @param decklist_df dataframe with character column \emph{cardcode} and numeric column \emph{count}
+#' @returns character vector of decklist with format '\{count\}:\{cardcode\}'
+df_to_simple_decklist <- function(decklist_df) {
+  as.character(glue::glue("{decklist_df$count}:{decklist_df$cardcode}"))
+}
+
+
+
+
 #' translate decklist of card ID and count into LoR custom encoding
 #'
 #' LoR uses a custom encoding scheme (\href{https://github.com/RiotGames/LoRDeckCodes}{laid out here})
