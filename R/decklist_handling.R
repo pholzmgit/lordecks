@@ -194,7 +194,7 @@ gen_int_decklist <- function(decklist) {
 
   }
 
-  int_out
+  strtoi(int_out)
 
 }
 
@@ -309,6 +309,8 @@ parse_decklist <- function(cardinfo) {
 
     cardinfo <- cardinfo[-1:-4]
   }
+
+  decklist  <- decklist %>% dplyr::mutate(cardcode = as.character(cardcode))
 
   decklist
 
