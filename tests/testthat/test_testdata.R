@@ -19,8 +19,6 @@ for(i in 1:length(code_positions)) {
 }
 
 test_that("correct parsing of example deck codes", {
-  # this produces warnings due to the version info in the testdata
-  # but all decks ARE actually correctly parsed.
   for(i in 1:length(examples)) {
     expect_equal(sort(get_decklist_from_code(examples[[i]]$code, format = "simple")),
                  sort(examples[[i]]$simple_format))
