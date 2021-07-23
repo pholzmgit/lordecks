@@ -11,8 +11,8 @@
 #' lordecks:::varint_bytes_to_binary("01111111")
 #' # returns "1111111"                        # = 127
 #'
-#' lordecks:::varint_bytes_to_binary(c("01111111", "10000001", "00000000"))
-#' # returns c(1111111, 00000010000000)       # = c(127, 128)
+#' lordecks:::varint_bytes_to_binary(c("01111111", "10000000", "00000001", "11011001", "00000001"))
+#' # returns c(1111111, 00000010000000, 00000011011001)       # = c(127, 128, 217)
 varint_bytes_to_binary <- function(bytearray) {
   # varint:
   # MSB:
@@ -35,13 +35,13 @@ varint_bytes_to_binary <- function(bytearray) {
     MSB <- stringr::str_extract(b, "^[01]{1}")
     bin_number <- stringr::str_extract(b, "[01]{7}$")
 
-    current_bin <- paste0(leading, bin_number)
+    current_bin <- paste0(bin_number, leading)
 
     if(MSB == "0") {
       binary_out <- c(binary_out, current_bin)
       leading <- ""
     } else {
-      leading <- bin_number
+      leading <- current_bin
     }
 
   }
@@ -62,13 +62,13 @@ varint_bytes_to_binary <- function(bytearray) {
 #' The function takes a vector of integers and translates them into a varint byte vector.
 #' For varints, the most significant bit indicates whether the next byte belongs to the
 #' same integer (1) or if it is the last byte (0), so the lenght of the input and output
-#' vectors do not match as soon as one of the numbers i larger than 127.
+#' vectors do not match as soon as one of the numbers is larger than 127.
 #'
 #' @param int_array vector of positive integers
 #' @return If all inputs are smaller than 2e9, a character vector containing varint bytes
 #' @examples
-#' lordecks:::int_to_varint(c(3, 128, 12))
-#' # returns c("00000011", "10000001", "00000000", "00001100")
+#' lordecks:::int_to_varint(c(3, 128, 12, 217))
+#' # returns c("00000011", "10000000", "00000001", "00001100", "11011001", "00000001")
 int_to_varint <- function(int_array) {
 
   if(any(as.numeric(int_array) < 0)) {
@@ -98,6 +98,8 @@ int_to_varint <- function(int_array) {
     if(n_bits > 7) {
 
       non_MSB <- stringr::str_match_all(bin_num_padded, "[01]{7}")[[1]][, 1]
+      #reverse order of bytes
+      non_MSB <- rev(non_MSB)
       #add leading 1 to all
       with_MSB <- as.character(glue::glue("1{non_MSB}"))
       #set leading 0 for last element in varint

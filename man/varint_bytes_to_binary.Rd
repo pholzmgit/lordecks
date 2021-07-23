@@ -22,6 +22,6 @@ whether the next byte belongs to the same integer (1) or if it is the last byte 
 lordecks:::varint_bytes_to_binary("01111111")
 # returns "1111111"                        # = 127
 
-lordecks:::varint_bytes_to_binary(c("01111111", "10000001", "00000000"))
-# returns c(1111111, 00000010000000)       # = c(127, 128)
+lordecks:::varint_bytes_to_binary(c("01111111", "10000000", "00000001", "11011001", "00000001"))
+# returns c(1111111, 00000010000000, 00000011011001)       # = c(127, 128, 217)
 }
