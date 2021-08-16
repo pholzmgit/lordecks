@@ -4,7 +4,7 @@
 \alias{base32_decode}
 \title{Decode base-32 representation of deck code}
 \usage{
-base32_decode(code, max_known_version = 3)
+base32_decode(code, max_known_version = 4)
 }
 \arguments{
 \item{code}{character deck code in base 32 (RFC 4648)}

@@ -116,13 +116,13 @@ gen_int_decklist <- function(decklist) {
   max_version <- max(decklist$Version, na.rm = TRUE)
 
   #first byte
-  # the original encoder fixes this at 19, but the actual
-  # game exports only based on the factions - do so as well
+  # encode the minimal supported library version
   version_format <- dplyr::case_when(
     max_version == 1 ~ 17, #i.e. 00010001 for version 1
     max_version == 2 ~ 18, #i.e. 00010010 for version 2
     max_version == 3 ~ 19, #i.e. 00010011 for version 3
-    TRUE ~ 19 #fallback
+    max_version == 4 ~ 20, #i.e. 00010100 for version 4
+    TRUE ~ 20 #fallback
   )
 
   int_out <- c(version_format)

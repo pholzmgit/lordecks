@@ -75,9 +75,9 @@ get_code_from_decklist_df(df_decklist)
 
 ## Note on deck code versions
 
-The deck codes start with 4 bit for format and 4 bit for version. So far this only indicates which regions are available - too old versions of the decoder have no information on factions released more recently. The C# library always generates codes with the latest version, but the actual game does not. 
+The deck codes start with 4 bit for format and 4 bit for version. So far this only indicates which regions are available - too old versions of the decoder have no information on factions released more recently. Like the game client, this library encodes the minimal supported version based on the factions in the deck.
 
-Instead, the lowest possible version based on the factions in the deck is encoded. **In this aspect, the library follows the implementation of the game**. While this results in slightly different deck codes, the resulting decklists are identical.
+The C# library previously always generated codes with the latest version, but the most recent version (4+) behaves the same way. While older versions produced slightly different deck codes, the resulting decklists were identical.
 
 ```{r}
 #example code list provided from the test data set

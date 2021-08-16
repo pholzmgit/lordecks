@@ -1,6 +1,6 @@
 Package: lordecks
 Title: Encode and Decode Deck List For Legends Of Runeterra
-Version: 0.0.0.9000
+Version: 0.0.1.0000
 Authors@R: 
     person(given = "Phil",
            family = "Holzmeister",
