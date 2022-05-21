@@ -64,7 +64,7 @@ base32_encode <- function(int_decklist) {
 #' #    4, 5, 2, 1, 4, 51, 52, 2, 3, 5, 4, 6, 3, 3, 4, 5,
 #' #    13, 18, 2, 1, 1, 4, 54, 2, 1, 5, 19, 47, 2, 1, 3,
 #' #    5, 12, 3, 1, 5, 1, 25, 33)
-base32_decode <- function(code, max_known_version = 4) {
+base32_decode <- function(code, max_known_version = 5) {
 
   #example in: "CEDACAIFDUAQEBAIAECAIBICAECDGNACAMCQIBQDAMCAKDISAIAQCBBWAIAQKEZPAIAQGBIMAMAQKAIZEE"
 

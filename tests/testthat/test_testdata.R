@@ -105,4 +105,13 @@ test_that("order should not matter", {
 
 })
 
+test_that("Runeterra faction works", {
+  deck_RU <- c("4:01DE002", "2:03MT003", "3:03MT010", "5:01RU001")
+
+  expect_equal(
+    sort(
+      get_decklist_from_code(get_code_from_decklist(deck_RU), format = "simple")
+      ),
+    sort(deck_RU))
+})
 

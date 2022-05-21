@@ -122,7 +122,8 @@ gen_int_decklist <- function(decklist) {
     max_version == 2 ~ 18, #i.e. 00010010 for version 2
     max_version == 3 ~ 19, #i.e. 00010011 for version 3
     max_version == 4 ~ 20, #i.e. 00010100 for version 4
-    TRUE ~ 20 #fallback
+    max_version == 5 ~ 21, #i.e. 00010101 for version 5
+    TRUE ~ 21 #fallback to latest version
   )
 
   int_out <- c(version_format)
